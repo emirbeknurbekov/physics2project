@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Godlberg machine</title>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="description" content="Godlberg machine" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+			integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+			crossorigin="anonymous"
+		/>
+		<script
+			src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+			integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+			crossorigin="anonymous"
+		></script>
+		<style>
+			.gap-2 {
+				gap: 0.5rem;
+			}
+			.stats {
+				position: fixed;
+				right: 100px;
+				top: 100px;
+			}
+		</style>
+	</head>
+	<body>
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			<button class="btn btn-info pd-2" id="run-btn">RUN</button>
+			<button class="btn btn-warning pd-2" id="reload-btn">RELEOAD</button>
+			<button class="btn btn-primary" id="new">NEW</button>
+			<button
+				type="button"
+				class="btn btn-info"
+				data-toggle="modal"
+				data-target="#edit-modal"
+			>
+				EDIT
+			</button>
+
+			<!-- ! NEW BUTTON GROUP START -->
+			<div class="d-flex gap-2 align-items-center ml-5">
+				<button
+					type="button"
+					class="btn btn-success"
+					data-toggle="modal"
+					data-target="#new-circle"
+				>
+					NEW CIRCLE
+				</button>
+				<button
+					type="button"
+					class="btn btn-success"
+					data-toggle="modal"
+					data-target="#new-rectangle"
+				>
+					NEW RECTANGLE
+				</button>
+				<button
+					type="button"
+					class="btn btn-success"
+					data-toggle="modal"
+					data-target="#new-polygon"
+				>
+					NEW POLYGON
+				</button>
+				<button
+					type="button"
+					class="btn btn-success"
+					data-toggle="modal"
+					data-target="#new-trapezoid"
+				>
+					NEW TRAPEZOID
+				</button>
+				<button class="btn btn-primary" id="random">RANDOM</button>
+			</div>
+
+			<!-- ! NEW BUTTON GROUP END -->
+		</nav>
+
+		<div class="stats">
+			<h4>Время падения: <span class="time"></span></h4>
+			<h4>Энергия: <span class="energy"></span></h4>
+		</div>
+
+		<div class="modal" tabindex="-1" id="edit-modal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Edit object</h5>
+						<button
+							type="button"
+							class="close"
+							data-dismiss="modal"
+							aria-label="Close"
+						>
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<label for="name" class="col-lg-2">Name:</label>
+						<input
+							type="text"
+							class="form-control"
+							placeholder="name"
+							aria-label="name"
+							aria-describedby="basic-addon2"
+							id="edit-name"
+						/>
+						<label for="radius" class="col-lg-2">Radius:</label>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="radius"
+							aria-label="radius"
+							aria-describedby="basic-addon2"
+							id="edit-radius"
+						/>
+						<label for="angle" class="col-lg-2">Angle:</label>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="angle"
+							aria-label="angle"
+							aria-describedby="basic-addon2"
+							id="edit-angle"
+						/>
+						<label for="mass" class="col-lg-2">Mass:</label>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="mass"
+							aria-label="mass"
+							aria-describedby="basic-addon2"
+							id="edit-mass"
+						/>
+						<label for="friction" class="col-lg-2">Friction:</label>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="friction"
+							aria-label="friction"
+							aria-describedby="basic-addon2"
+							id="edit-friction"
+						/>
+						<label for="restitution" class="col-lg-2">Restitution:</label>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="restitution"
+							aria-label="restitution"
+							aria-describedby="basic-addon2"
+							id="edit-restitution"
+						/>
+					</div>
+					<div class="modal-footer">
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-dismiss="modal"
+						>
+							Close
+						</button>
+						<button type="button" class="btn btn-primary" id="edit-save">
+							Save changes
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- ! NEW CIRCLE MODAL START -->
+
+		<div class="modal" tabindex="-1" id="new-circle">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">New circle</h5>
+						<button
+							type="button"
+							class="close"
+							data-dismiss="modal"
+							aria-label="Close"
+						>
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<label for="radius" class="col-lg-2">Radius:</label>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="radius"
+							aria-label="radius"
+							aria-describedby="basic-addon2"
+							id="circle-radius"
+							value="30"
+						/>
+						<label for="circle-mass" class="col-lg-2">Mass:</label>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="mass"
+							aria-label="circle-mass"
+							aria-describedby="basic-addon2"
+							id="circle-mass"
+							value="10"
+						/>
+						<label for="circle-friction" class="col-lg-2">Friction:</label>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="friction"
+							aria-label="circle-friction"
+							aria-describedby="basic-addon2"
+							id="circle-friction"
+							value="0"
+						/>
+						<label for="circle-restitution" class="col-lg-2"
+							>Restitution:</label
+						>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="restitution"
+							aria-label="circle-restitution"
+							aria-describedby="basic-addon2"
+							id="circle-restitution"
+							value="0.5"
+						/>
+					</div>
+					<div class="modal-footer">
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-dismiss="modal"
+						>
+							Close
+						</button>
+						<button
+							data-dismiss="modal"
+							type="button"
+							class="btn btn-primary"
+							id="circle-save"
+						>
+							Create
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- ! NEW CIRCLE MODAL END -->
+
+		<!-- ! NEW RECTANGLE MODAL START -->
+
+		<div class="modal" tabindex="-1" id="new-rectangle">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">New rectangle</h5>
+						<button
+							type="button"
+							class="close"
+							data-dismiss="modal"
+							aria-label="Close"
+						>
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<label for="width" class="col-lg-2">Width:</label>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="width"
+							aria-label="width"
+							aria-describedby="basic-addon2"
+							id="rectangle-width"
+							value="100"
+						/>
+						<label for="height" class="col-lg-2">Height:</label>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="height"
+							aria-label="height"
+							aria-describedby="basic-addon2"
+							id="rectangle-height"
+							value="50"
+						/>
+						<label for="rectangle-mass" class="col-lg-2">Mass:</label>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="mass"
+							aria-label="rectangle-mass"
+							aria-describedby="basic-addon2"
+							id="rectangle-mass"
+							value="10"
+						/>
+						<label for="rectangle-friction" class="col-lg-2">Friction:</label>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="friction"
+							aria-label="rectangle-friction"
+							aria-describedby="basic-addon2"
+							id="rectangle-friction"
+							value="0"
+						/>
+						<label for="rectangle-restitution" class="col-lg-2"
+							>Restitution:</label
+						>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="restitution"
+							aria-label="rectangle-restitution"
+							aria-describedby="basic-addon2"
+							id="rectangle-restitution"
+							value="0.5"
+						/>
+					</div>
+					<div class="modal-footer">
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-dismiss="modal"
+						>
+							Close
+						</button>
+						<button
+							data-dismiss="modal"
+							type="button"
+							class="btn btn-primary"
+							id="rectangle-save"
+						>
+							Create
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- ! NEW RECTANGLE MODAL END -->
+
+		<!-- ! NEW POLYGON MODAL START -->
+
+		<div class="modal" tabindex="-1" id="new-polygon">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">New polygon</h5>
+						<button
+							type="button"
+							class="close"
+							data-dismiss="modal"
+							aria-label="Close"
+						>
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<label for="sides" class="col-lg-2">Sides:</label>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="sides"
+							aria-label="sides"
+							aria-describedby="basic-addon2"
+							id="polygon-sides"
+							value="8"
+						/>
+						<label for="length" class="col-lg-2">Length:</label>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="length"
+							aria-label="length"
+							aria-describedby="basic-addon2"
+							id="polygon-length"
+							value="30"
+						/>
+
+						<label for="polygon-mass" class="col-lg-2">Mass:</label>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="mass"
+							aria-label="polygon-mass"
+							aria-describedby="basic-addon2"
+							id="polygon-mass"
+							value="10"
+						/>
+						<label for="polygon-friction" class="col-lg-2">Friction:</label>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="friction"
+							aria-label="polygon-friction"
+							aria-describedby="basic-addon2"
+							id="polygon-friction"
+							value="0"
+						/>
+						<label for="polygon-restitution" class="col-lg-2"
+							>Restitution:</label
+						>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="restitution"
+							aria-label="polygon-restitution"
+							aria-describedby="basic-addon2"
+							id="polygon-restitution"
+							value="0.5"
+						/>
+					</div>
+					<div class="modal-footer">
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-dismiss="modal"
+						>
+							Close
+						</button>
+						<button
+							data-dismiss="modal"
+							type="button"
+							class="btn btn-primary"
+							id="polygon-save"
+						>
+							Create
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- ! NEW POLYGON MODAL END -->
+
+		<!-- ! NEW TRAPEZOID MODAL START -->
+
+		<div class="modal" tabindex="-1" id="new-trapezoid">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">New trapezoid</h5>
+						<button
+							type="button"
+							class="close"
+							data-dismiss="modal"
+							aria-label="Close"
+						>
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<label for="width" class="col-lg-2">Width:</label>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="width"
+							aria-label="width"
+							aria-describedby="basic-addon2"
+							id="trapezoid-width"
+							value="100"
+						/>
+						<label for="height" class="col-lg-2">Height:</label>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="height"
+							aria-label="height"
+							aria-describedby="basic-addon2"
+							id="trapezoid-height"
+							value="50"
+						/>
+						<label for="slope" class="col-lg-2">Slope:</label>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="slope"
+							aria-label="slope"
+							aria-describedby="basic-addon2"
+							id="trapezoid-slope"
+							value="0.5"
+						/>
+						<label for="trapezoid-mass" class="col-lg-2">Mass:</label>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="mass"
+							aria-label="trapezoid-mass"
+							aria-describedby="basic-addon2"
+							id="trapezoid-mass"
+							value="10"
+						/>
+						<label for="trapezoid-friction" class="col-lg-2">Friction:</label>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="friction"
+							aria-label="trapezoid-friction"
+							aria-describedby="basic-addon2"
+							id="trapezoid-friction"
+							value="0"
+						/>
+						<label for="trapezoid-restitution" class="col-lg-2"
+							>Restitution:</label
+						>
+						<input
+							type="number"
+							step="any"
+							class="form-control"
+							placeholder="restitution"
+							aria-label="trapezoid-restitution"
+							aria-describedby="basic-addon2"
+							id="trapezoid-restitution"
+							value="0.5"
+						/>
+					</div>
+					<div class="modal-footer">
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-dismiss="modal"
+						>
+							Close
+						</button>
+						<button
+							data-dismiss="modal"
+							type="button"
+							class="btn btn-primary"
+							id="trapezoid-save"
+						>
+							Create
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ! NEW TRAPEZOID MODAL END -->
+
+		<script src="js/matter.js"></script>
+		<script src="js/main.js"></script>
+	</body>
+</html>
